@@ -104,7 +104,7 @@ def callback():
         insert_user_to_database(user_data)
         session['logged_user'] = get_converted_email(user_data['email'])
 
-        return redirect('http://localhost:3000')
+        return redirect('http://localhost:3000/home')
     return jsonify({"success":"False"}), 400
 
 # End point to get user's currently playing track using Python requests, and insert it to the database
