@@ -182,6 +182,12 @@ class Database:
     # SONG HISTORY CRUD OPERATIONS
     def create_song_history(self, song_history):
         """ Create a song history in the database """
+        # check if the song history with the same user and song has already existed
+        existing_song_history = self.get_all_song_history_from_user(song_history.email)
+        for song in existing_song_history:
+            if (song_history.song_id == song['song_id']):
+                return
+
         self.song_history_coll.insert_one(song_history.__dict__)
 
     def get_all_song_history_from_user(self, user_email):
@@ -264,13 +270,13 @@ class Database:
 
 # NEW SONG JSON
 {
-    "email": "hevin.jant@gmail.com",
-    "song_id": "1",
-    "song_name": "Test song name",
-    "song_artist": "Test song artist",
-    "song_album": "Test song album",
-    "song_url": "Test song url",
-    "song_image_url": "Test song image url"
+    "email": "hevin-jant@gmail-com",
+    "song_id": "song id",
+    "track_name": "song name",
+    "artists": "song artists",
+    "album": "album",
+    "song_url": "song url",
+    "image_url": "song image url"
 }
 
 # NEW REACTION JSON

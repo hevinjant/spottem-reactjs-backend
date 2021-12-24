@@ -97,18 +97,25 @@ def callback():
     return jsonify({"success":"False"}), 400
 
 # End point to get user's currently playing track using Python requests, and insert it to the database
-@app.route('/current-track/<email>')
+@app.route('/current-track/<email>',methods=['GET', 'POST'])
 def get_current_track(email):
-    """ Returns the current playing track of a user, access token is needed """
-    #logged_user = session['logged_user']
-    response = get_user_current_track()
-    if response:
+    """ Returns the current playing track of a user, access token is needed. Or insert a current playing track given by the frontend. """
+    if request.method == 'GET':
+        #logged_user = session['logged_user']
+        response = get_user_current_track()
+        if response:
+            # insert the current track to the logged in user's database
+            song = Song(email, response['id'], response['track_name'], response['artists'], "", response['link'], response['image_url'])
+            Database().update_current_track(email, song)
+            return response
+        Database().update_current_track(email, None)
+        return jsonify({"error":"there is no track playing."}), 404
+    elif request.method == 'POST':
         # insert the current track to the logged in user's database
-        song = Song(email, response['id'], response['track_name'], response['artists'], "", response['link'], response['image_url'])
+        new_song_json = request.get_json()
+        song = Song(email, new_song_json['song_id'], new_song_json['track_name'], new_song_json['artists'], "", new_song_json['song_url'], new_song_json['image_url'])
         Database().update_current_track(email, song)
-        return response
-    Database().update_current_track(email, None)
-    return jsonify({"error":"there is no track playing."}), 404
+        return jsonify({'new_song': new_song_json}), 201
 
 # End point to get user's currently playing track using Python requests
 @app.route('/current-track/spotify')
