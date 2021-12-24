@@ -3,6 +3,8 @@
 #pylint: disable=W0105
 #pylint: disable=W0107
 
+# HEROKU URL: https://spottem-reactjs-backend.herokuapp.com/
+
 """ The module below is to get user authorization using the Spotify 'Authorization Code Flow' """
 
 import requests
@@ -43,27 +45,14 @@ SPOTIFY_GET_USER_PROFILE_URL = 'https://api.spotify.com/v1/me'
 # end of SPOTIFY END POINTS
 
 # SPOTIFY DEVELOPER APP CREDENTIALS
-#CLIENT_ID = os.environ.get('CLIENT_ID') # Spotify developer app id
-#CLIENT_SECRET = os.environ.get('CLIENT_SECRET') # Spotify developer app password
-# end of SPOTIFY DEVELOPER APP CREDENTIALS
-
-#app = Flask(__name__)
-
-#app.secret_key = os.environ.get('APP_SECRET_KEY')
-#app.config['SESSION_COOKIE_NAME'] = 'cookie'
-
-#####
-# SPOTIFY DEVELOPER APP CREDENTIALS
-CLIENT_ID = "8ad10722bf9f4c539591db26b5ae4abc" # Spotify developer app id
-CLIENT_SECRET = "b978797c68c7425bb43ae4fbc238399e" # Spotify developer app password
+CLIENT_ID = os.environ.get('CLIENT_ID') # Spotify developer app id
+CLIENT_SECRET = os.environ.get('CLIENT_SECRET') # Spotify developer app password
 # end of SPOTIFY DEVELOPER APP CREDENTIALS
 
 app = Flask(__name__)
 
-app.secret_key = "awienwbga48we5"
+app.secret_key = os.environ.get('APP_SECRET_KEY')
 app.config['SESSION_COOKIE_NAME'] = 'cookie'
-#####
-
 
 # End point to get user authorization
 @app.route('/login')
