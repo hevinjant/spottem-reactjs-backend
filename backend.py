@@ -151,7 +151,7 @@ def welcome():
 #     return jsonify({"error":"User not found"}), 404
 
 # Get complete user information from database (including songs and reactions), or insert new user to the database
-@app.route('/user/<email>', method=['GET','POST'])
+@app.route('/user/<email>', methods=['GET','POST'])
 def get_user_from_db(email):
     """ Get user from database or insert user to database """
     if method == 'GET':
