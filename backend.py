@@ -316,5 +316,5 @@ def get_user_current_track():
         return current_track_info
     return None
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port=5001)

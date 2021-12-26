@@ -299,18 +299,3 @@ class Database:
 }
 """
 
-email = "hevin-jant@gmail-com"
-#name = "Hevin Jant"
-#sender = "travisphawley@gmail-com"
-#sender_name = "thawlf"
-# # __init__(self, email, song_id, song_name, artist, album, song_url, song_image_url)
-song = Song(email, "5iSEsR6NKjlC9SrIJkyL3k", "Pursuit Of Happiness (Nightmare)", "Kid Cudi, MGMT, Ratatat", "", "https://open.spotify.com/track/5iSEsR6NKjlC9SrIJkyL3k", "https://i.scdn.co/image/ab67616d0000b273aab2c3c3f1f3207137d915c9")
-# # __init__(self, email, sender_email, song_id, song_name, artist, album, song_url, song_image_url, time_stamp)
-# reaction = Reaction(email, name, sender, sender_name, "1QFw2xxyQtgKjlrMCEqsNj",
-#  "Papaoutai", "Stromae", "",
-#   "https://open.spotify.com/track/1QFw2xxyQtgKjlrMCEqsNj",
-#    "https://i.scdn.co/image/ab67616d0000b273e742841accccf949d7af1b75", "12/1/2021")
-Database().update_current_track(email, song)
-# #Database().create_song_history(song)
-# Database().create_reaction(reaction)
-#Database().delete_friend('hevin-jant@gmail-com','newfriend2@email-com')
