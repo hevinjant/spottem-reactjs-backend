@@ -96,12 +96,6 @@ def callback():
         return redirect('http://localhost:3000/home')
     return jsonify({"success":"False"}), 400
 
-# End point to insert a new user from front-end
-@app.route('/user')
-def insert_user():
-    user_data = request.get_json()
-    insert_user_to_database(user_data)
-
 # End point to get user's currently playing track using Python requests, and insert it to the database
 @app.route('/current-track/<email>',methods=['GET', 'POST'])
 def get_current_track(email):
@@ -156,19 +150,25 @@ def welcome():
 #         return jsonify({'user': user_data}), 200
 #     return jsonify({"error":"User not found"}), 404
 
-# Get complete user information from database (including songs and reactions)
-@app.route('/user/<email>')
+# Get complete user information from database (including songs and reactions), or insert new user to the database
+@app.route('/user/<email>', method=['GET','POST'])
 def get_user_from_db(email):
-    """ Get user from database """
-    if Database().user_exists(email):
-        user = get_complete_user_info(email)
-        if user:
-            # # also get the current playing track if the <email> is the current logged in user
-            # if user['email'] == session['logged_user']:
-            #     current_track = get_user_current_track()
-            #     user['current_track'] = current_track
-            return jsonify({'user': user}), 200
-    return jsonify({"error":"User not found"}), 404
+    """ Get user from database or insert user to database """
+    if method == 'GET':
+        if Database().user_exists(email):
+            user = get_complete_user_info(email)
+            if user:
+                # # also get the current playing track if the <email> is the current logged in user
+                # if user['email'] == session['logged_user']:
+                #     current_track = get_user_current_track()
+                #     user['current_track'] = current_track
+                return jsonify({'user': user}), 200
+        return jsonify({"error":"User not found"}), 404
+
+    elif method == 'POST':
+        user_data = request.get_json()
+        insert_user_to_database(user_data)
+        return jsonify({'user':user_data}), 201
 
 # Get all friends or insert a friend for a user
 @app.route('/user/friends/<email>', methods=['GET', 'POST', 'DELETE'])
@@ -232,7 +232,7 @@ def get_or_insert_reactions_from_db(email, song_id):
 @app.route('/reactions')
 def get_all_reactions():
     reactions = Database().get_all_reactions()
-    return jsonify({'reactions':reactions}), 201
+    return jsonify({'reactions':reactions}), 200
 
 # Insert new user to the database
 def insert_user_to_database(user_data):
