@@ -154,7 +154,7 @@ def welcome():
 @app.route('/user/<email>', methods=['GET','POST'])
 def get_user_from_db(email):
     """ Get user from database or insert user to database """
-    if method == 'GET':
+    if request.method == 'GET':
         if Database().user_exists(email):
             user = get_complete_user_info(email)
             if user:
@@ -165,7 +165,7 @@ def get_user_from_db(email):
                 return jsonify({'user': user}), 200
         return jsonify({"error":"User not found"}), 404
 
-    elif method == 'POST':
+    elif request.method == 'POST':
         user_data = request.get_json()
         insert_user_to_database(user_data)
         return jsonify({'user':user_data}), 201
