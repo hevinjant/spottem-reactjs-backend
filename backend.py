@@ -113,7 +113,7 @@ def get_current_track(email):
     elif request.method == 'POST':
         # insert the current track to the logged in user's database
         new_song_json = request.get_json()
-        song = Song(email, new_song_json['song_id'], new_song_json['track_name'], new_song_json['artists'], "", new_song_json['song_url'], new_song_json['image_url'])
+        song = Song(email, new_song_json['song_id'], new_song_json['song_name'], new_song_json['song_artists'], "", new_song_json['song_url'], new_song_json['song_image_url'])
         Database().update_current_track(email, song)
         return jsonify({'new_song': new_song_json}), 201
 
