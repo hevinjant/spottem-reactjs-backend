@@ -313,7 +313,7 @@ def get_user_current_track():
 
         artist_names = ', '.join([artist['name'] for artist in artists])
 
-        preview_url = json_resp['preview_url']
+        preview_url = json_resp['item']['preview_url']
 
         current_track_info = {
             "id": track_id,
