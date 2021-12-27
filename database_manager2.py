@@ -27,7 +27,7 @@ class User:
 # class to store song data
 class Song:
     """ Class to store song data """
-    def __init__(self, email, song_id, song_name, artist, album, song_url, song_image_url):
+    def __init__(self, email, song_id, song_name, artist, album, song_url, song_image_url, preview_url):
         self.email = get_converted_email(email)
         self.song_id = song_id
         self.song_name = song_name
@@ -35,11 +35,12 @@ class Song:
         self.album = album
         self.song_url = song_url
         self.song_image_url = song_image_url
+        self.preview_url = preview_url
 
 # class to store reaction data
 class Reaction:
     """ Class to store reaction data """
-    def __init__(self, email, name, sender_email, sender_name, song_id, song_name, artist, album, song_url, song_image_url, time_stamp):
+    def __init__(self, email, name, sender_email, sender_name, song_id, song_name, artist, album, song_url, song_image_url, preview_url, time_stamp):
         self.email = get_converted_email(email)
         self.name = name
         self.sender_email = sender_email
@@ -51,6 +52,7 @@ class Reaction:
         self.album = album
         self.song_url = song_url
         self.song_image_url = song_image_url
+        self.preview_url = preview_url
         self.time_stamp = time_stamp
 
 # Database manager to perform CRUD operations on the database using the MongoDB driver

@@ -105,7 +105,7 @@ def get_current_track(email):
         response = get_user_current_track()
         if response:
             # insert the current track to the logged in user's database
-            song = Song(email, response['id'], response['track_name'], response['artists'], "", response['link'], response['image_url'])
+            song = Song(email, response['id'], response['track_name'], response['artists'], "", response['link'], response['image_url'], response['preview_url'])
             Database().update_current_track(email, song)
             return response
         Database().update_current_track(email, None)
@@ -113,7 +113,7 @@ def get_current_track(email):
     elif request.method == 'POST':
         # insert the current track to the logged in user's database
         new_song_json = request.get_json()
-        song = Song(email, new_song_json['song_id'], new_song_json['song_name'], new_song_json['song_artists'], "", new_song_json['song_url'], new_song_json['song_image_url'])
+        song = Song(email, new_song_json['song_id'], new_song_json['song_name'], new_song_json['song_artists'], "", new_song_json['song_url'], new_song_json['song_image_url'], new_song_json['preview_url'])
         Database().update_current_track(email, song)
         return jsonify({'new_song': new_song_json}), 201
 
@@ -313,16 +313,19 @@ def get_user_current_track():
 
         artist_names = ', '.join([artist['name'] for artist in artists])
 
+        preview_url = json_resp['preview_url']
+
         current_track_info = {
             "id": track_id,
             "track_name": track_name,
             "artists": artist_names,
             "link": link,
-            "image_url": image_url
+            "image_url": image_url,
+            "preview_url": preview_url
         }
  
         return current_track_info
     return None
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port=5001)
