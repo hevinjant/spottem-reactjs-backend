@@ -228,8 +228,8 @@ def get_or_insert_reactions_from_db(email, song_id):
         Database().create_reaction(reaction)
         return jsonify({'reaction':reaction_json}), 201
     elif request.method == 'DELETE':
-        if Database().reaction_exists(email, song_id):
-            Database().delete_reaction(email, song_id)
+        if Database().reaction_sender_exists(email, song_id):
+            Database().delete_sender_reaction(email, song_id)
             response = jsonify(success=True)
             response.status_code = 204
             return response

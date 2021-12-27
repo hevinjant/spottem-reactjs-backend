@@ -262,9 +262,17 @@ class Database:
         return reactions
 
     def delete_reaction(self, user_email, song_id):
-        """ Delete a reaction from the database """
+        """ Delete a reaction from the database for recipient """
         query = {
             "email": get_converted_email(user_email),
+            "song_id": song_id
+        }
+        self.reactions_coll.delete_one(query)
+
+    def delete_sender_reaction(self, sender_email, song_id):
+        """ Delete a reaction from the database for sender """
+        query = {
+            "sender_email": get_converted_email(sender_email),
             "song_id": song_id
         }
         self.reactions_coll.delete_one(query)
