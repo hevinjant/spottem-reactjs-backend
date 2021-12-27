@@ -211,11 +211,11 @@ def get_or_insert_song_history_from_db(email):
         return jsonify({'song_history':song_history_json}), 201
 
 # Get and Insert reaction for a song to database
-@app.route('/reactions/<email>/<song_id>', methods=['GET', 'POST'])
+@app.route('/reactions/<email>/<song_id>', methods=['GET', 'POST', 'DELETE'])
 def get_or_insert_reactions_from_db(email, song_id):
     if request.method == 'GET':
-        if Database().reaction_exists(email, song_id):
-            reactions = Database().get_reactions(email, song_id)
+        if Database().reaction_sender_exists(email, song_id):
+            reactions = Database().get_sender_reactions(email, song_id)
             return jsonify({'reactions': reactions}), 200
         return jsonify({"error":"reactions not found"}), 404
     elif request.method == 'POST':
@@ -227,6 +227,13 @@ def get_or_insert_reactions_from_db(email, song_id):
         reaction = Reaction(reaction_json['email'], name, reaction_json['sender_email'], sender_name, reaction_json['song_id'], reaction_json['song_name'], reaction_json['song_artists'], reaction_json['song_album'], reaction_json['song_url'], reaction_json['song_image_url'], reaction_json['time_stamp'])
         Database().create_reaction(reaction)
         return jsonify({'reaction':reaction_json}), 201
+    elif request.method == 'DELETE':
+        if Database().reaction_exists(email, song_id):
+            Database().delete_reaction(email, song_id)
+            response = jsonify(success=True)
+            response.status_code = 204
+            return response
+        return jsonify({"error":"reactions not found"}), 404
 
 # Get all reactions for all users
 @app.route('/reactions')

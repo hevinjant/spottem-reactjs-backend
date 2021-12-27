@@ -226,9 +226,22 @@ class Database:
         self.reactions_coll.insert_one(reaction.__dict__)
 
     def get_reactions(self, user_email, song_id):
-        """ Get a reaction from the database """
+        """ Get a reaction from the database for recipient """
         query = {
             "email": get_converted_email(user_email),
+            "song_id": song_id
+        }
+        response = self.reactions_coll.find(query)
+        reactions = []
+        for reaction in response:
+            reaction['_id'] = str(reaction['_id'])
+            reactions.append(reaction)
+        return reactions
+
+    def get_sender_reactions(self, sender_email, song_id):
+        """ Get a reaction from the database for sender """
+        query = {
+            "sender_email": get_converted_email(user_email),
             "song_id": song_id
         }
         response = self.reactions_coll.find(query)
@@ -260,6 +273,14 @@ class Database:
         """ Check if a reaction exists in the database """
         query = {
             "email": get_converted_email(user_email),
+            "song_id": song_id
+        }
+        return self.reactions_coll.find_one(query) is not None
+
+    def reaction_sender_exists(self, sender_email, song_id):
+        """ Check if sender_email gives reaction to song_id """
+        query = {
+            "sender_email": get_converted_email(user_email),
             "song_id": song_id
         }
         return self.reactions_coll.find_one(query) is not None
