@@ -94,7 +94,7 @@ class Database:
     def insert_friend_to_user(self, user_email, friend_email):
         """ Insert a friend to user friends array """
         # check if friend_email is a valid user
-        if !(self.user_exists(friend_email)):
+        if not (self.user_exists(friend_email)):
             return False
 
         # check if friend already exists in the friend list
