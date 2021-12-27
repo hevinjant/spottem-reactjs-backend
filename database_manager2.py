@@ -241,7 +241,7 @@ class Database:
     def get_sender_reactions(self, sender_email, song_id):
         """ Get a reaction from the database for sender """
         query = {
-            "sender_email": get_converted_email(user_email),
+            "sender_email": get_converted_email(sender_email),
             "song_id": song_id
         }
         response = self.reactions_coll.find(query)
@@ -280,7 +280,7 @@ class Database:
     def reaction_sender_exists(self, sender_email, song_id):
         """ Check if sender_email gives reaction to song_id """
         query = {
-            "sender_email": get_converted_email(user_email),
+            "sender_email": get_converted_email(sender_email),
             "song_id": song_id
         }
         return self.reactions_coll.find_one(query) is not None
