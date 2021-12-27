@@ -186,7 +186,8 @@ def get_or_insert_friend_for_user(email):
         new_friend_json = request.get_json()
         success = Database().insert_friend_to_user(new_friend_json['email'], new_friend_json['friend_email'])
         if success:
-            return jsonify({'new_friend': new_friend_json}), 201
+            new_friend = get_complete_user_info(new_friend_json['friend_email'])
+            return jsonify({'new_friend': new_friend}), 201
         return jsonify({'new_friend': new_friend_json}), 204
     elif request.method == 'DELETE':
         remove_friend_json = request.get_json()
