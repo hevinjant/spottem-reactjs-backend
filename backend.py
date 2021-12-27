@@ -225,7 +225,7 @@ def get_or_insert_reactions_from_db(email, song_id):
         name = name['name']
         sender_name = Database().get_user(reaction_json['sender_email'])
         sender_name = sender_name['name']
-        reaction = Reaction(reaction_json['email'], name, reaction_json['sender_email'], sender_name, reaction_json['song_id'], reaction_json['song_name'], reaction_json['song_artists'], reaction_json['song_album'], reaction_json['song_url'], reaction_json['song_image_url'], reaction_json['time_stamp'])
+        reaction = Reaction(reaction_json['email'], name, reaction_json['sender_email'], sender_name, reaction_json['song_id'], reaction_json['song_name'], reaction_json['song_artists'], reaction_json['song_album'], reaction_json['song_url'], reaction_json['song_image_url'], reaction_json['preview_url'], reaction_json['time_stamp'])
         Database().create_reaction(reaction)
         return jsonify({'reaction':reaction_json}), 201
     elif request.method == 'DELETE':
