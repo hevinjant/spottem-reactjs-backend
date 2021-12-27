@@ -163,7 +163,7 @@ class Database:
                         }
                     )
 
-                    prev_current_track = Song(user['current_track']['email'], user['current_track']['song_id'], user['current_track']['song_name'], user['current_track']['artist'], user['current_track']['album'], user['current_track']['song_url'],user['current_track']['song_image_url'])
+                    prev_current_track = Song(user['current_track']['email'], user['current_track']['song_id'], user['current_track']['song_name'], user['current_track']['artist'], user['current_track']['album'], user['current_track']['song_url'],user['current_track']['song_image_url'],user['current_track']['preview_url'])
                     self.create_song_history(prev_current_track)
             else:
                 query = {
