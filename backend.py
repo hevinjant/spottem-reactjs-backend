@@ -55,6 +55,10 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('APP_SECRET_KEY')
 app.config['SESSION_COOKIE_NAME'] = 'cookie'
 
+RESPONSE_HEADER = { "Access-Control-Allow-Origin": "*", 
+                    "Access-Control-Allow-Methods": "GET, POST, DELETE", 
+                    "Access-Control-Allow-Headers": "Content-Type" }
+
 # End point to get user authorization
 @app.route('/login')
 def login():
@@ -108,24 +112,17 @@ def get_current_track(email):
             # insert the current track to the logged in user's database
             song = Song(email, response['id'], response['track_name'], response['artists'], "", response['link'], response['image_url'], response['preview_url'])
             Database().update_current_track(email, song)
-            response = make_response(response)
-            response.headers["Access-Control-Allow-Origin"] = "*"
+            response = jsonify(response), 200, RESPONSE_HEADER
             return response
         Database().update_current_track(email, None)
-        response = make_response(jsonify({"error":"there is no track playing."}), 404)
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        response = jsonify({"error":"there is no track playing."}), 404, RESPONSE_HEADER
         return response
     elif request.method == 'POST':
         # insert the current track to the logged in user's database
         new_song_json = request.get_json()
         song = Song(email, new_song_json['song_id'], new_song_json['song_name'], new_song_json['song_artists'], "", new_song_json['song_url'], new_song_json['song_image_url'], new_song_json['preview_url'])
         Database().update_current_track(email, song)
-        response = make_response(jsonify({'new_song': new_song_json}), 201)
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        response = jsonify({'new_song': new_song_json}), 201, RESPONSE_HEADER
         return response
 
 # End point to get user's currently playing track using Python requests
@@ -173,13 +170,9 @@ def get_user_from_db(email):
                 # if user['email'] == session['logged_user']:
                 #     current_track = get_user_current_track()
                 #     user['current_track'] = current_track
-                response = make_response(jsonify({'user': user}), 200)
-                response.headers["Access-Control-Allow-Origin"] = "*"
-                response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-                response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+                response = jsonify({'user': user}), 200, RESPONSE_HEADER
                 return response
-        response = make_response(jsonify({"error":"User not found"}), 404)
-        response.headers["Access-Control-Allow-Origin"] = "*"
+        response = jsonify({"error":"User not found"}), 404, RESPONSE_HEADER
         return response
 
     elif request.method == 'POST':
