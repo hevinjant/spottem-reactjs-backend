@@ -19,7 +19,6 @@ class AccessTokenError(Exception):
     """ Custom exception for when access token is not found """
     pass
 
-# URI FOR GCP: https://spottem.wl.r.appspot.com/callback
 
 # SPOTIFY END POINTS
 """
