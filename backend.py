@@ -56,7 +56,7 @@ app.secret_key = os.environ.get('APP_SECRET_KEY')
 app.config['SESSION_COOKIE_NAME'] = 'cookie'
 
 RESPONSE_HEADER = { "Access-Control-Allow-Origin": "*", 
-                    "Access-Control-Allow-Methods": "GET, POST, DELETE", 
+                    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS", 
                     "Access-Control-Allow-Headers": "Content-Type" }
 
 @app.after_request
@@ -198,24 +198,24 @@ def get_or_insert_friend_for_user(email):
             for friend in friends:
                 friend_data = get_complete_user_info(friend)
                 result.append(friend_data)
-            response = jsonify({'friends': result}), 200, RESPONSE_HEADER
+            response = jsonify({'friends': result}), 200 #, RESPONSE_HEADER
             return response
-        response = jsonify({"error":"User not found"}), 404, RESPONSE_HEADER
+        response = jsonify({"error":"User not found"}), 404 #, RESPONSE_HEADER
         return response
     elif request.method == 'POST':
         new_friend_json = request.get_json()
         success = Database().insert_friend_to_user(new_friend_json['email'], new_friend_json['friend_email'])
         if success:
             new_friend = get_complete_user_info(new_friend_json['friend_email'])
-            response = jsonify({'new_friend': new_friend}), 201, RESPONSE_HEADER
+            response = jsonify({'new_friend': new_friend}), 201 #, RESPONSE_HEADER
             return response
-        response = jsonify({'new_friend': new_friend_json}), 204, RESPONSE_HEADER
+        response = jsonify({'new_friend': new_friend_json}), 204 #, RESPONSE_HEADER
         return response
     elif request.method == 'DELETE':
         remove_friend_json = request.get_json()
         if Database().user_exists(email):
             Database().delete_friend(remove_friend_json['email'], remove_friend_json['friend_email'])
-            response = jsonify(success=True), 204, RESPONSE_HEADER
+            response = jsonify(success=True), 204 #, RESPONSE_HEADER
             return response
 
 # Get or insert song history for user
@@ -380,5 +380,5 @@ def get_user_current_track():
         return current_track_info
     return None
 
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0', port=5001)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5001)
