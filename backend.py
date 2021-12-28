@@ -9,7 +9,7 @@
 
 import requests
 from flask import Flask, request, url_for, session, jsonify, redirect, render_template, make_response
-#from flask_cors import CORS
+from flask_cors import CORS
 from urllib.parse import urlencode
 from database_manager2 import User, Song, Reaction, Database, get_converted_email, get_original_email
 import uuid
@@ -50,7 +50,7 @@ CLIENT_SECRET = os.environ.get('CLIENT_SECRET') # Spotify developer app password
 # end of SPOTIFY DEVELOPER APP CREDENTIALS
 
 app = Flask(__name__)
-#CORS(app)
+CORS(app)
 
 app.secret_key = os.environ.get('APP_SECRET_KEY')
 app.config['SESSION_COOKIE_NAME'] = 'cookie'
@@ -59,12 +59,12 @@ RESPONSE_HEADER = { "Access-Control-Allow-Origin": "*",
                     "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS", 
                     "Access-Control-Allow-Headers": "Content-Type" }
 
-@app.after_request
-def after_request(response):
-  response.headers.add('Access-Control-Allow-Origin', '*')
-  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-  return response
+# @app.after_request
+# def after_request(response):
+#   response.headers.add('Access-Control-Allow-Origin', '*')
+#   response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+#   response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+#   return response
 
 # End point to get user authorization
 @app.route('/login')
@@ -198,24 +198,24 @@ def get_or_insert_friend_for_user(email):
             for friend in friends:
                 friend_data = get_complete_user_info(friend)
                 result.append(friend_data)
-            response = jsonify({'friends': result}), 200 #, RESPONSE_HEADER
+            response = jsonify({'friends': result}), 200, RESPONSE_HEADER
             return response
-        response = jsonify({"error":"User not found"}), 404 #, RESPONSE_HEADER
+        response = jsonify({"error":"User not found"}), 404, RESPONSE_HEADER
         return response
     elif request.method == 'POST':
         new_friend_json = request.get_json()
         success = Database().insert_friend_to_user(new_friend_json['email'], new_friend_json['friend_email'])
         if success:
             new_friend = get_complete_user_info(new_friend_json['friend_email'])
-            response = jsonify({'new_friend': new_friend}), 201 #, RESPONSE_HEADER
+            response = jsonify({'new_friend': new_friend}), 201, RESPONSE_HEADER
             return response
-        response = jsonify({'new_friend': new_friend_json}), 204 #, RESPONSE_HEADER
+        response = jsonify({'new_friend': new_friend_json}), 204, RESPONSE_HEADER
         return response
     elif request.method == 'DELETE':
         remove_friend_json = request.get_json()
         if Database().user_exists(email):
             Database().delete_friend(remove_friend_json['email'], remove_friend_json['friend_email'])
-            response = jsonify(success=True), 204 #, RESPONSE_HEADER
+            response = jsonify(success=True), 204, RESPONSE_HEADER
             return response
 
 # Get or insert song history for user
@@ -227,19 +227,13 @@ def get_or_insert_song_history_from_db(email):
             response = make_response(jsonify({'song_history': song_history}), 200)
             response.headers["Access-Control-Allow-Origin"] = "*"
             return response
-        response = make_response(jsonify({"error":"song history not found"}), 404)
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        response = jsonify({"error":"song history not found"}), 404, RESPONSE_HEADER
         return response
     elif request.method == 'POST':
         song_history_json = request.get_json()
         song_history = Song(song_history_json['email'], song_history_json['song_id'], song_history_json['song_name'], song_history_json['song_artists'], song_history_json['song_album'], song_history_json['song_url'], song_history_json['song_image_url'])
         Database().create_song_history(song_history)
-        response = make_response(jsonify({'song_history':song_history_json}), 201)
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        response = jsonify({'song_history':song_history_json}), 201, RESPONSE_HEADER
         return response
 
 # Get and Insert reaction for a song to database
@@ -248,15 +242,9 @@ def get_or_insert_reactions_from_db(email, song_id):
     if request.method == 'GET':
         if Database().reaction_sender_exists(email, song_id):
             reactions = Database().get_sender_reactions(email, song_id)
-            response = make_response(jsonify({'reactions': reactions}), 200)
-            response.headers["Access-Control-Allow-Origin"] = "*"
-            response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-            response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+            response = jsonify({'reactions': reactions}), 200, RESPONSE_HEADER
             return response
-        response = make_response(jsonify({"error":"reactions not found"}), 404)
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        response = jsonify({"error":"reactions not found"}), 404, RESPONSE_HEADER
         return response
     elif request.method == 'POST':
         reaction_json = request.get_json()
@@ -266,33 +254,21 @@ def get_or_insert_reactions_from_db(email, song_id):
         sender_name = sender_name['name']
         reaction = Reaction(reaction_json['email'], name, reaction_json['sender_email'], sender_name, reaction_json['song_id'], reaction_json['song_name'], reaction_json['song_artists'], reaction_json['song_album'], reaction_json['song_url'], reaction_json['song_image_url'], reaction_json['preview_url'], reaction_json['time_stamp'])
         Database().create_reaction(reaction)
-        response = make_response(jsonify({'reaction':reaction_json}), 201)
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        response = jsonify({'reaction':reaction_json}), 201, RESPONSE_HEADER
         return response
     elif request.method == 'DELETE':
         if Database().reaction_sender_exists(email, song_id):
             Database().delete_sender_reaction(email, song_id)
-            response = make_response(jsonify(success=True), 204)
-            response.headers["Access-Control-Allow-Origin"] = "*"
-            response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-            response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+            response = jsonify(success=True), 204, RESPONSE_HEADER
             return response
-        response = make_response(jsonify({"error":"reactions not found"}), 404)
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        response = jsonify({"error":"reactions not found"}), 404, RESPONSE_HEADER
         return response
 
 # Get all reactions for all users
 @app.route('/reactions')
 def get_all_reactions():
     reactions = Database().get_all_reactions()
-    response = make_response(jsonify({'reactions':reactions}), 200)
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response = jsonify({'reactions':reactions}), 200, RESPONSE_HEADER
     return response
 
 # Insert new user to the database
@@ -380,5 +356,5 @@ def get_user_current_track():
         return current_track_info
     return None
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port=5001)
