@@ -9,7 +9,7 @@
 
 import requests
 from flask import Flask, request, url_for, session, jsonify, redirect, render_template, make_response
-from flask_cors import CORS
+#from flask_cors import CORS
 from urllib.parse import urlencode
 from database_manager2 import User, Song, Reaction, Database, get_converted_email, get_original_email
 import uuid
@@ -50,7 +50,7 @@ CLIENT_SECRET = os.environ.get('CLIENT_SECRET') # Spotify developer app password
 # end of SPOTIFY DEVELOPER APP CREDENTIALS
 
 app = Flask(__name__)
-CORS(app)
+#CORS(app)
 
 app.secret_key = os.environ.get('APP_SECRET_KEY')
 app.config['SESSION_COOKIE_NAME'] = 'cookie'
@@ -58,6 +58,13 @@ app.config['SESSION_COOKIE_NAME'] = 'cookie'
 RESPONSE_HEADER = { "Access-Control-Allow-Origin": "*", 
                     "Access-Control-Allow-Methods": "GET, POST, DELETE", 
                     "Access-Control-Allow-Headers": "Content-Type" }
+
+@app.after_request
+def after_request(response):
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  return response
 
 # End point to get user authorization
 @app.route('/login')
