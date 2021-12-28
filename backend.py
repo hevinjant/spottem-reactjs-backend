@@ -9,7 +9,7 @@
 
 import requests
 from flask import Flask, request, url_for, session, jsonify, redirect, render_template, make_response
-#from flask_cors import CORS
+from flask_cors import CORS
 from urllib.parse import urlencode
 from database_manager2 import User, Song, Reaction, Database, get_converted_email, get_original_email
 import uuid
@@ -50,7 +50,7 @@ CLIENT_SECRET = os.environ.get('CLIENT_SECRET') # Spotify developer app password
 # end of SPOTIFY DEVELOPER APP CREDENTIALS
 
 app = Flask(__name__)
-#cors = CORS(app, resources={r"*": {"origins":"*"}})
+cors = CORS(app, resources={r"*": {"origins":"*"}})
 
 app.secret_key = os.environ.get('APP_SECRET_KEY')
 app.config['SESSION_COOKIE_NAME'] = 'cookie'
@@ -178,10 +178,7 @@ def get_user_from_db(email):
     elif request.method == 'POST':
         user_data = request.get_json()
         insert_user_to_database(user_data)
-        response = make_response(jsonify({'user':user_data}), 201)
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        response = jsonify({'user':user_data}), 201, RESPONSE_HEADER
         return response
 
 # Get all friends or insert a friend for a user
@@ -194,30 +191,24 @@ def get_or_insert_friend_for_user(email):
             for friend in friends:
                 friend_data = get_complete_user_info(friend)
                 result.append(friend_data)
-            response = make_response(jsonify({'friends': result}), 200)
-            response.headers["Access-Control-Allow-Origin"] = "*"
+            response = jsonify({'friends': result}), 200, RESPONSE_HEADER
             return response
-        response = make_response(jsonify({"error":"User not found"}), 404)
-        response.headers["Access-Control-Allow-Origin"] = "*"
+        response = jsonify({"error":"User not found"}), 404, RESPONSE_HEADER
         return response
     elif request.method == 'POST':
         new_friend_json = request.get_json()
         success = Database().insert_friend_to_user(new_friend_json['email'], new_friend_json['friend_email'])
         if success:
             new_friend = get_complete_user_info(new_friend_json['friend_email'])
-            response = make_response(jsonify({'new_friend': new_friend}), 201)
-            response.headers["Access-Control-Allow-Origin"] = "*"
+            response = jsonify({'new_friend': new_friend}), 201, RESPONSE_HEADER
             return response
-        response = make_response(jsonify({'new_friend': new_friend_json}), 204)
-        response.headers["Access-Control-Allow-Origin"] = "*"
+        response = jsonify({'new_friend': new_friend_json}), 204, RESPONSE_HEADER
         return response
     elif request.method == 'DELETE':
         remove_friend_json = request.get_json()
         if Database().user_exists(email):
             Database().delete_friend(remove_friend_json['email'], remove_friend_json['friend_email'])
-            response = make_response(jsonify(success=True))
-            response.status_code = 204
-            response.headers["Access-Control-Allow-Origin"] = "*"
+            response = jsonify(success=True), 204, RESPONSE_HEADER
             return response
 
 # Get or insert song history for user
