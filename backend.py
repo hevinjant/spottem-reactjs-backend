@@ -9,6 +9,7 @@
 
 import requests
 from flask import Flask, request, url_for, session, jsonify, redirect, render_template, make_response
+from flask_cors import CORS
 from urllib.parse import urlencode
 from database_manager2 import User, Song, Reaction, Database, get_converted_email, get_original_email
 import uuid
@@ -50,6 +51,7 @@ CLIENT_SECRET = os.environ.get('CLIENT_SECRET') # Spotify developer app password
 # end of SPOTIFY DEVELOPER APP CREDENTIALS
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"*": {"origins":"*"}})
 
 app.secret_key = os.environ.get('APP_SECRET_KEY')
 app.config['SESSION_COOKIE_NAME'] = 'cookie'
