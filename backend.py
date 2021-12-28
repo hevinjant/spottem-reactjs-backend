@@ -122,7 +122,7 @@ def get_current_track(email):
             response = jsonify(response), 200, RESPONSE_HEADER
             return response
         Database().update_current_track(email, None)
-        response = jsonify({"error":"there is no track playing."}), 404, RESPONSE_HEADER
+        response = jsonify({"error":"there is no track playing."}), 204, RESPONSE_HEADER
         return response
     elif request.method == 'POST':
         # insert the current track to the logged in user's database
@@ -243,7 +243,7 @@ def get_or_insert_reactions_from_db(email, song_id):
             reactions = Database().get_sender_reactions(email, song_id)
             response = jsonify({'reactions': reactions}), 200, RESPONSE_HEADER
             return response
-        response = jsonify({"error":"reactions not found"}), 404, RESPONSE_HEADER
+        response = jsonify({"error":"reactions not found"}), 204, RESPONSE_HEADER
         return response
     elif request.method == 'POST':
         reaction_json = request.get_json()
