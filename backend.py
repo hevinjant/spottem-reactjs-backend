@@ -224,8 +224,7 @@ def get_or_insert_song_history_from_db(email):
     if request.method == 'GET':
         if Database().song_history_for_user_exists(email):
             song_history = Database().get_all_song_history_from_user(email)
-            response = make_response(jsonify({'song_history': song_history}), 200)
-            response.headers["Access-Control-Allow-Origin"] = "*"
+            response = jsonify({'song_history': song_history}), 200, RESPONSE_HEADER
             return response
         response = jsonify({"error":"song history not found"}), 404, RESPONSE_HEADER
         return response
