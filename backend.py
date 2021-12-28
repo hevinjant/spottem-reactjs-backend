@@ -50,7 +50,7 @@ CLIENT_SECRET = os.environ.get('CLIENT_SECRET') # Spotify developer app password
 # end of SPOTIFY DEVELOPER APP CREDENTIALS
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"*": {"origins":"*"}})
+CORS(app)
 
 app.secret_key = os.environ.get('APP_SECRET_KEY')
 app.config['SESSION_COOKIE_NAME'] = 'cookie'
