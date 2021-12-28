@@ -9,7 +9,7 @@
 
 import requests
 from flask import Flask, request, url_for, session, jsonify, redirect, render_template, make_response
-from flask_cors import CORS
+#from flask_cors import CORS
 from urllib.parse import urlencode
 from database_manager2 import User, Song, Reaction, Database, get_converted_email, get_original_email
 import uuid
@@ -50,7 +50,7 @@ CLIENT_SECRET = os.environ.get('CLIENT_SECRET') # Spotify developer app password
 # end of SPOTIFY DEVELOPER APP CREDENTIALS
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"*": {"origins":"*"}})
+#cors = CORS(app, resources={r"*": {"origins":"*"}})
 
 app.secret_key = os.environ.get('APP_SECRET_KEY')
 app.config['SESSION_COOKIE_NAME'] = 'cookie'
@@ -114,6 +114,8 @@ def get_current_track(email):
         Database().update_current_track(email, None)
         response = make_response(jsonify({"error":"there is no track playing."}), 404)
         response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
         return response
     elif request.method == 'POST':
         # insert the current track to the logged in user's database
@@ -122,6 +124,8 @@ def get_current_track(email):
         Database().update_current_track(email, song)
         response = make_response(jsonify({'new_song': new_song_json}), 201)
         response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
         return response
 
 # End point to get user's currently playing track using Python requests
@@ -171,6 +175,8 @@ def get_user_from_db(email):
                 #     user['current_track'] = current_track
                 response = make_response(jsonify({'user': user}), 200)
                 response.headers["Access-Control-Allow-Origin"] = "*"
+                response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+                response.headers["Access-Control-Allow-Headers"] = "Content-Type"
                 return response
         response = make_response(jsonify({"error":"User not found"}), 404)
         response.headers["Access-Control-Allow-Origin"] = "*"
@@ -181,6 +187,8 @@ def get_user_from_db(email):
         insert_user_to_database(user_data)
         response = make_response(jsonify({'user':user_data}), 201)
         response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
         return response
 
 # Get all friends or insert a friend for a user
@@ -195,6 +203,8 @@ def get_or_insert_friend_for_user(email):
                 result.append(friend_data)
             response = make_response(jsonify({'friends': result}), 200)
             response.headers["Access-Control-Allow-Origin"] = "*"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type"
             return response
         return jsonify({"error":"User not found"}), 404
     elif request.method == 'POST':
@@ -204,9 +214,13 @@ def get_or_insert_friend_for_user(email):
             new_friend = get_complete_user_info(new_friend_json['friend_email'])
             response = make_response(jsonify({'new_friend': new_friend}), 201)
             response.headers["Access-Control-Allow-Origin"] = "*"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type"
             return response
         response = make_response(jsonify({'new_friend': new_friend_json}), 204)
         response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
         return response
     elif request.method == 'DELETE':
         remove_friend_json = request.get_json()
@@ -215,6 +229,8 @@ def get_or_insert_friend_for_user(email):
             response = make_response(jsonify(success=True))
             response.status_code = 204
             response.headers["Access-Control-Allow-Origin"] = "*"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type"
             return response
 
 # Get or insert song history for user
@@ -228,6 +244,8 @@ def get_or_insert_song_history_from_db(email):
             return response
         response = make_response(jsonify({"error":"song history not found"}), 404)
         response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
         return response
     elif request.method == 'POST':
         song_history_json = request.get_json()
@@ -235,6 +253,8 @@ def get_or_insert_song_history_from_db(email):
         Database().create_song_history(song_history)
         response = make_response(jsonify({'song_history':song_history_json}), 201)
         response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
         return response
 
 # Get and Insert reaction for a song to database
@@ -245,9 +265,13 @@ def get_or_insert_reactions_from_db(email, song_id):
             reactions = Database().get_sender_reactions(email, song_id)
             response = make_response(jsonify({'reactions': reactions}), 200)
             response.headers["Access-Control-Allow-Origin"] = "*"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type"
             return response
         response = make_response(jsonify({"error":"reactions not found"}), 404)
         response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
         return response
     elif request.method == 'POST':
         reaction_json = request.get_json()
@@ -259,15 +283,21 @@ def get_or_insert_reactions_from_db(email, song_id):
         Database().create_reaction(reaction)
         response = make_response(jsonify({'reaction':reaction_json}), 201)
         response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
         return response
     elif request.method == 'DELETE':
         if Database().reaction_sender_exists(email, song_id):
             Database().delete_sender_reaction(email, song_id)
             response = make_response(jsonify(success=True), 204)
             response.headers["Access-Control-Allow-Origin"] = "*"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type"
             return response
         response = make_response(jsonify({"error":"reactions not found"}), 404)
         response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
         return response
 
 # Get all reactions for all users
@@ -276,6 +306,8 @@ def get_all_reactions():
     reactions = Database().get_all_reactions()
     response = make_response(jsonify({'reactions':reactions}), 200)
     response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
     return response
 
 # Insert new user to the database
