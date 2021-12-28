@@ -196,10 +196,10 @@ def get_or_insert_friend_for_user(email):
                 result.append(friend_data)
             response = make_response(jsonify({'friends': result}), 200)
             response.headers["Access-Control-Allow-Origin"] = "*"
-            response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-            response.headers["Access-Control-Allow-Headers"] = "Content-Type"
             return response
-        return jsonify({"error":"User not found"}), 404
+        response = make_response(jsonify({"error":"User not found"}), 404)
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        return response
     elif request.method == 'POST':
         new_friend_json = request.get_json()
         success = Database().insert_friend_to_user(new_friend_json['email'], new_friend_json['friend_email'])
@@ -207,13 +207,9 @@ def get_or_insert_friend_for_user(email):
             new_friend = get_complete_user_info(new_friend_json['friend_email'])
             response = make_response(jsonify({'new_friend': new_friend}), 201)
             response.headers["Access-Control-Allow-Origin"] = "*"
-            response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-            response.headers["Access-Control-Allow-Headers"] = "Content-Type"
             return response
         response = make_response(jsonify({'new_friend': new_friend_json}), 204)
         response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
         return response
     elif request.method == 'DELETE':
         remove_friend_json = request.get_json()
@@ -222,8 +218,6 @@ def get_or_insert_friend_for_user(email):
             response = make_response(jsonify(success=True))
             response.status_code = 204
             response.headers["Access-Control-Allow-Origin"] = "*"
-            response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE"
-            response.headers["Access-Control-Allow-Headers"] = "Content-Type"
             return response
 
 # Get or insert song history for user
