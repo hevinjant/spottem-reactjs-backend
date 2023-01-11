@@ -1,20 +1,29 @@
 from pymongo import MongoClient
 import certifi
+import os
 
 DB_PASSWORD = "rLAc5vn4dUV4S4bm"
-DB_ENDPOINT = "mongodb+srv://admin:" + DB_PASSWORD + "@cluster0.1rgh3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+DB_ENDPOINT = "mongodb+srv://admin:" + DB_PASSWORD + \
+    "@cluster0.1rgh3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+
+DB_ENDPOINT = os.environ.get('DB_ENDPOINT')
+
 
 def get_converted_email(email):
-    converted = email.replace('.','-')
+    converted = email.replace('.', '-')
     return converted
 
+
 def get_original_email(email):
-    converted = email.replace('-','.')
+    converted = email.replace('-', '.')
     return converted
 
 # class user to store user data
+
+
 class User:
     """ Class to store user data """
+
     def __init__(self, name, user_id, email, user_dp):
         self.name = name
         self.user_id = user_id
@@ -25,8 +34,11 @@ class User:
         self.current_track = None
 
 # class to store song data
+
+
 class Song:
     """ Class to store song data """
+
     def __init__(self, email, song_id, song_name, artist, album, song_url, song_image_url, preview_url):
         self.email = get_converted_email(email)
         self.song_id = song_id
@@ -38,8 +50,11 @@ class Song:
         self.preview_url = preview_url
 
 # class to store reaction data
+
+
 class Reaction:
     """ Class to store reaction data """
+
     def __init__(self, email, name, sender_email, sender_name, song_id, song_name, artist, album, song_url, song_image_url, preview_url, time_stamp):
         self.email = get_converted_email(email)
         self.name = name
@@ -56,8 +71,11 @@ class Reaction:
         self.time_stamp = time_stamp
 
 # Database manager to perform CRUD operations on the database using the MongoDB driver
+
+
 class Database:
     """ Database Manager to perform CRUD to MongoDB """
+
     def __init__(self):
         self.cluster = MongoClient(DB_ENDPOINT, tlsCAFile=certifi.where())
         self.db = self.cluster["spottem"]
@@ -69,7 +87,7 @@ class Database:
     def create_user(self, user):
         """ Create a user in the database """
         self.user_coll.insert_one(user.__dict__)
-    
+
     def get_user(self, user_email):
         """ Get a user from the database """
         query = {
@@ -110,7 +128,7 @@ class Database:
         self.user_coll.update_one(
             query,
             {
-                "$push": {"friends":get_converted_email(friend_email)}
+                "$push": {"friends": get_converted_email(friend_email)}
             }
         )
         return True
@@ -128,7 +146,7 @@ class Database:
             }
             self.user_coll.update_one(
                 query,
-                { 
+                {
                     "$set": {'friends': friends}
                 }
             )
@@ -158,12 +176,13 @@ class Database:
                     }
                     self.user_coll.update_one(
                         query,
-                        { 
+                        {
                             "$set": {'current_track': song.__dict__}
                         }
                     )
 
-                    prev_current_track = Song(user['current_track']['email'], user['current_track']['song_id'], user['current_track']['song_name'], user['current_track']['artist'], user['current_track']['album'], user['current_track']['song_url'],user['current_track']['song_image_url'],user['current_track']['preview_url'])
+                    prev_current_track = Song(user['current_track']['email'], user['current_track']['song_id'], user['current_track']['song_name'], user['current_track']['artist'],
+                                              user['current_track']['album'], user['current_track']['song_url'], user['current_track']['song_image_url'], user['current_track']['preview_url'])
                     self.create_song_history(prev_current_track)
             else:
                 query = {
@@ -171,7 +190,7 @@ class Database:
                 }
                 self.user_coll.update_one(
                     query,
-                    { 
+                    {
                         "$set": {'current_track': song.__dict__}
                     }
                 )
@@ -181,7 +200,7 @@ class Database:
             }
             self.user_coll.update_one(
                 query,
-                { 
+                {
                     "$set": {'current_track': None}
                 }
             )
@@ -190,7 +209,8 @@ class Database:
     def create_song_history(self, song_history):
         """ Create a song history in the database """
         # check if the song history with the same user and song has already existed
-        existing_song_history = self.get_all_song_history_from_user(song_history.email)
+        existing_song_history = self.get_all_song_history_from_user(
+            song_history.email)
         for song in existing_song_history:
             if (song_history.song_id == song['song_id']):
                 return
@@ -300,6 +320,7 @@ class Database:
         }
         return self.reactions_coll.find_one(query) is not None
 
+
 """
 # NEW USER JSON
 
@@ -334,4 +355,3 @@ class Database:
     "friend_email": "newfriend@email.com"
 }
 """
-
