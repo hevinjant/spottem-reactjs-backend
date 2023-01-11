@@ -2,10 +2,6 @@ from pymongo import MongoClient
 import certifi
 import os
 
-DB_PASSWORD = "rLAc5vn4dUV4S4bm"
-DB_ENDPOINT = "mongodb+srv://admin:" + DB_PASSWORD + \
-    "@cluster0.1rgh3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-
 DB_ENDPOINT = os.environ.get('DB_ENDPOINT')
 
 
