@@ -11,7 +11,7 @@ import requests
 from flask import Flask, request, url_for, session, jsonify, redirect, render_template, make_response
 from flask_cors import CORS
 from urllib.parse import urlencode
-from database_manager2 import User, Song, Reaction, Database, get_converted_email, get_original_email
+from database_manager import User, Song, Reaction, Database, get_converted_email, get_original_email
 import uuid
 import os
 
@@ -403,5 +403,7 @@ def get_user_current_track():
         return current_track_info
     return None
 
+
+# Comment when deploying
 # if __name__ == '__main__':
 #     app.run(host='0.0.0.0', port=5001)
